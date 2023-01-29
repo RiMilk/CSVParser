@@ -2,7 +2,7 @@ CC=g++
 CFLAGS=-c -Wall
 SOURSE=main.cpp main.h parser.cpp parser.h
 OBJECTS=$(SOURSE:.cpp=.o)
-EXECUTABLE=test
+EXECUTABLE=csvreader
 
 
 all:	$(SOURSE) $(EXECUTABLE)

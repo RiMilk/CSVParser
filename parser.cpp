@@ -32,9 +32,6 @@ void CSVData::reader(std::string file)
 
 void CSVData::output()
 {
-    int iter = 0;
-    size_t count = 1;
-
     for(std::string item : header)
         std::cout << "," << item;
 
