@@ -40,23 +40,14 @@ void CSVData::output()
 
     std::cout << std::endl;
 
-    for(std::pair<std::string, std::string> item : map)
+    for(std::string column : columns)
     {
-        if (count == 1)
+        std::cout << column;
+        for(std::string head : header)
         {
-            std::cout << columns[iter];
-            iter++;
+            std::cout << "," << map[head+column];
         }
-
-        std::cout << " " << item.second;
-
-        if (count == header.size())
-        {
-            std::cout << std::endl;
-            count = 1;
-        }
-        else
-            count++;
+        std::cout<<std::endl;
     }
 }
 
