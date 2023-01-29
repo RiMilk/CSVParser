@@ -1,6 +1,6 @@
-CC=clang++
-CFLAGS=-c
-SOURSE=main.cpp parser.cpp
+CC=g++
+CFLAGS=-c -Wall
+SOURSE=main.cpp main.h parser.cpp parser.h
 OBJECTS=$(SOURSE:.cpp=.o)
 EXECUTABLE=csvreader
 
@@ -15,4 +15,4 @@ $(EXECUTABLE): $(OBJECTS)
 	$(CC) $(CFLAGS) $< -o $@
 
 clean:
-	rm -f *.o $(EXECUTABLE)
+	del *.o $(EXECUTABLE).exe

@@ -1,7 +1,6 @@
 #ifndef MAIN_H
 # define MAIN_H
 
-#include <iostream>
-#include <fstream>
+#include "parser.h"
 
 #endif //MAIN_H
