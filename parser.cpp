@@ -1,21 +1,36 @@
 #include "parser.h"
 
-void reader(std::string fileName)
+CSVData::CSVData(std::string file)
 {
-    std::ifstream file(fileName);
-    std::vector<std::string> header;
-    std::vector<std::string> columns;
-    std::map<std::string, std::string> map;
-
-    header = getHeader(fileName);
-    columns = getColumns(fileName);
-    map = getData(fileName, header);
-    map = getCalc(map);
-    
-    output(map, header, columns);
+    if (isOpen(file) && isValidData(file))
+        fileName = file;
 }
 
-void output(std::map<std::string, std::string> map, std::vector<std::string> header, std::vector<std::string> columns)
+CSVData::CSVData()
+{
+
+}
+
+CSVData::~CSVData()
+{
+}
+
+void CSVData::reader(std::string file)
+{
+    if (isOpen(file) && isValidData(file))
+        fileName = file;
+
+    std::ifstream fileOpen(fileName);
+
+    header = getHeader();
+    columns = getColumns();
+    map = getData(header);
+    map = getCalc(map);
+
+    fileOpen.close();
+}
+
+void CSVData::output()
 {
     int iter = 0;
     size_t count = 1;
@@ -45,7 +60,7 @@ void output(std::map<std::string, std::string> map, std::vector<std::string> hea
     }
 }
 
-std::vector<std::string> getHeader(std::string fileName)
+std::vector<std::string> CSVData::getHeader()
 {
 
     std::ifstream file(fileName);
@@ -54,7 +69,7 @@ std::vector<std::string> getHeader(std::string fileName)
     std::string line = "";
     std::vector<std::string> header;
 
-    getline(file, line); //
+    getline(file, line);
 
     pos = line.find(',');
     line = line.erase(0, 1);
@@ -73,7 +88,7 @@ std::vector<std::string> getHeader(std::string fileName)
     return (header);
 }
 
-std::vector<std::string> getColumns(std::string fileName)
+std::vector<std::string> CSVData::getColumns()
 {
 
     int pos = 0;
@@ -81,7 +96,7 @@ std::vector<std::string> getColumns(std::string fileName)
     std::ifstream file(fileName);
     std::vector<std::string> columns;
 
-    getline(file, line); //
+    getline(file, line); //Skip the first line with the header
     while (!file.eof())
     {
         std::map<std::string, std::string> tmp_map;
@@ -97,7 +112,7 @@ std::vector<std::string> getColumns(std::string fileName)
     return (columns);
 }
 
-std::map<std::string, std::string> getData(std::string fileName, std::vector<std::string> header)
+std::map<std::string, std::string> CSVData::getData(std::vector<std::string> header)
 {
 
     int pos = 0;
@@ -105,7 +120,7 @@ std::map<std::string, std::string> getData(std::string fileName, std::vector<std
     std::ifstream file(fileName);
     std::map<std::string, std::string> map;
 
-    getline(file, line); //
+    getline(file, line); //Skip the first line with the header
     while (!file.eof())
     {
         std::map<std::string, std::string> tmp_map;
@@ -137,10 +152,9 @@ std::map<std::string, std::string> getData(std::string fileName, std::vector<std
 }
 
 
-std::map<std::string, std::string> getCalc(std::map<std::string, std::string> map)
+std::map<std::string, std::string> CSVData::getCalc(std::map<std::string, std::string> map)
 {
     for(std::pair<std::string, std::string> item : map)
-    {
         if (item.second[0] == '=')
         {
             std::string tmp = item.second;
@@ -151,51 +165,60 @@ std::map<std::string, std::string> getCalc(std::map<std::string, std::string> ma
             int posDiv = tmp.find('/');
 
             if (posSum != -1)
-            {
-                std::string left = tmp.substr(1, posSum - 1);
-                std::string right = tmp.substr(posSum + 1, tmp.length() - 1 - posSum);
-
-                auto ileft = map.find(left);
-                auto iright = map.find(right);
-
-                map[item.first] = std::to_string(std::atoi(ileft->second.c_str()) + std::atoi(iright->second.c_str()));
-            }
-
+                map[item.first] = getArithmeticOperations(tmp, posSum, '+');
             if (posDiff != -1)
-            {
-                std::string left = tmp.substr(1, posSum - 1);
-                std::string right = tmp.substr(posSum + 1, tmp.length() - 1 - posSum);
-
-                auto ileft = map.find(left);
-                auto iright = map.find(right);
-
-                map[item.first] = std::to_string(std::atoi(ileft->second.c_str()) - std::atoi(iright->second.c_str()));
-            }
-
+                map[item.first] = getArithmeticOperations(tmp, posDiff, '-');
             if (posMult != -1)
-            {
-                std::string left = tmp.substr(1, posSum - 1);
-                std::string right = tmp.substr(posSum + 1, tmp.length() - 1 - posSum);
-
-                auto ileft = map.find(left);
-                auto iright = map.find(right);
-
-                map[item.first] = std::to_string(std::atoi(ileft->second.c_str()) * std::atoi(iright->second.c_str()));
-            }
-
+                map[item.first] = getArithmeticOperations(tmp, posMult, '*');
             if (posDiv != -1)
-            {
-                std::string left = tmp.substr(1, posSum - 1);
-                std::string right = tmp.substr(posSum + 1, tmp.length() - 1 - posSum);
-
-                auto ileft = map.find(left);
-                auto iright = map.find(right);
-
-                map[item.first] = std::to_string(std::atoi(ileft->second.c_str()) / std::atoi(iright->second.c_str()));
-            }
-            
+                map[item.first] = getArithmeticOperations(tmp, posDiv, '/');
         }
-    }
 
     return (map);
+}
+
+std::string CSVData::getArithmeticOperations(std::string line, int pos, char oper)
+{
+    std::string left = line.substr(1, pos - 1);
+    std::string right = line.substr(pos + 1, line.length() - 1 - pos);
+
+    auto ileft = map.find(left);
+    auto iright = map.find(right);
+
+    if (oper == '+')
+        return(std::to_string(std::atoi(ileft->second.c_str()) + std::atoi(iright->second.c_str())));
+    if (oper == '-')
+        return(std::to_string(std::atoi(ileft->second.c_str()) - std::atoi(iright->second.c_str())));
+    if (oper == '*')
+        return(std::to_string(std::atoi(ileft->second.c_str()) * std::atoi(iright->second.c_str())));
+    if (oper == '/')
+        return(std::to_string(std::atoi(ileft->second.c_str()) / std::atoi(iright->second.c_str()))); 
+    
+    return ("ERROR");
+}
+
+bool CSVData::isOpen(std::string fileName)
+{
+    std::ifstream file(fileName);
+
+    if (!file.is_open())
+    {
+        std::cout << "ERROR: File can not open!" << std::endl;
+        return (false);
+    }
+    
+    file.close();
+    return (true);
+}
+
+bool CSVData::isValidData(std::string fileName)
+{
+    int count = 0;
+
+    count = fileName.length();
+    if (count > 3 && fileName[count - 1] == 'v' && fileName[count - 2] == 's' && fileName[count - 3] == 'c' && fileName[count - 4] == '.')
+        return (true);
+    
+    std::cout << "ERROR: Incorrect input data format" << std::endl;
+    return (false);
 }

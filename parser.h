@@ -3,16 +3,36 @@
 
 #include <iostream>
 #include <fstream>
+#include <string>
 #include <vector>
 #include <map>
-#include <string>
 
-std::vector<std::string> getHeader(std::string fileName);
-std::vector<std::string> getColumns(std::string fileName);
-std::map<std::string, std::string> getData(std::string fileName, std::vector<std::string> header);
-std::map<std::string, std::string> getCalc(std::map<std::string, std::string> map);
+class CSVData{
+public:
 
-void reader(std::string fileName);
-void output(std::map<std::string, std::string> map, std::vector<std::string> header, std::vector<std::string> columns);
+    CSVData();
+    ~CSVData();
+    CSVData(std::string fileName);
+
+    std::string fileName;
+
+    void reader(std::string file);
+    void output();
+
+    std::vector<std::string> getHeader();
+    std::vector<std::string> getColumns();
+
+private:
+
+    std::vector<std::string> header;
+    std::vector<std::string> columns;
+    std::map<std::string, std::string> map;
+
+    bool isOpen(std::string fileName);
+    bool isValidData(std::string fileName);
+    std::string getArithmeticOperations(std::string line, int pos, char oper);
+    std::map<std::string, std::string> getData(std::vector<std::string> header);
+    std::map<std::string, std::string> getCalc(std::map<std::string, std::string> map);
+};
 
 #endif //PARSER_H
