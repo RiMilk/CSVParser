@@ -7,7 +7,7 @@ int main(int count, char *params[])
     {
         if (isOpen(params[1]) && isValidData(params[1]))
         {
-            std::cout << "compl" << std::endl;
+            reader(params[1]);
         }
     }
     else
@@ -26,6 +26,7 @@ bool isOpen(std::string fileName)
         return (false);
     }
     
+    file.close();
     return (true);
 }
 
