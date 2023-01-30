@@ -6,7 +6,8 @@ numbers or expressions of the form
 where ARG1 and ARG2 are integers or cell addresses in Column_name Row_number format, and OP is an arithmetic operation
 from the list: +, -, *, /.
 
-##Compilation for windows
+## Compilation for windows
 >make
-##Compilation for linux
+
+## Compilation for linux
 >make
