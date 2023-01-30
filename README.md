@@ -9,14 +9,14 @@ from the list: +, -, *, /.
 ## Compilation for windows
 Select the right Makefile for your system. 
 Drag and drop it into the project folder (or just delete the extra one when cloning).
->make
->csvreader.exe <your file name>.csv
+> make
+> csvreader.exe  `<your file name> `.csv
   
 ## Compilation for linux
 Select the right Makefile for your system. 
 Drag and drop it into the project folder (or just delete the extra one when cloning).
->make
->./csvreader <your file name>.csv
+> make
+> ./csvreader  `<your file name> `.csv 
 
 ## Cloning a repository
->git clone https://github.com/RiMilk/CSVParser.git
+> git clone https://github.com/RiMilk/CSVParser.git
